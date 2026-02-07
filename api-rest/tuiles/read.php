@@ -8,8 +8,8 @@ header("Acess-Control-Allow-Methods: GET");
 header("Acess-Control-Allow-Credentials: true");
 header("Content-Type: application/json; charset=UTF-8;");
 
-include_once '../config/databse.php';
-include_once '../tuiles/tuile.php';
+include_once '../config/database.php';
+include_once '../tuiles/tuiles.php';
 
 $database = New Database();
 $db = $database->getConnection();
@@ -26,7 +26,7 @@ if ($num>0) {
 	$tuiles_arr = array();
 	$tuiles_arr['records']=array();
 
-	while($row = $stmt->fetch(PDO::FETCH_ASSOC) {
+	while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 		extract($row);
 

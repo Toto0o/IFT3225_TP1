@@ -16,32 +16,11 @@ class Tuile {
 	public function __construct($db) {
 		$this->conn = $db;
 	}
-
-	public function read_one() {
-		$query = "SELECT id, titre, description, date, priorite, realise, categorie
-			FROM ".$this->table_name . "
-			WHERE id = ?
-			LIMIT 0,1";
-		
-		$stmt = $this->conn->prepare($query);
-		$stmt->binParam(1, $this->id);
-		$stmt->execute();
-
-		$row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-		extract($row);
-
-		$this->id = $id;
-		$this->titre = $titre;
-		$this->description = $description;
-		$this->priorite = $priorite;
-		$this->realise = $realise;
-		$this->categorie = $categorie;
-	}
+	
 
 	public function read() {
 		$query = "SELECT id, titre, description, date, priorite, realise, categorie
-			FROM". $this->table_name;
+			FROM ". $this->table_name;
 		
 		$stmt = $this->conn->prepare($query);
 		$stmt->execute();
@@ -100,3 +79,4 @@ class Tuile {
 
 		return false;
 	}
+}
