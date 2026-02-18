@@ -28,13 +28,14 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `Tuiles` (
-  `ID` int NOT NULL,
+  `ID` int NOT NULL AUTO_INCREMENT,
   `Titre` text NOT NULL,
   `Description` text NOT NULL,
   `Date` date NOT NULL,
-  `Priorite` enum('LOW','MEDIUM','HIGH') NOT NULL,
-  `Realise` tinyint(1) NOT NULL,
-  `Categorie` text NOT NULL
+  `Priorite` enum('haute','moyenne','basse') NOT NULL,
+  `Realise` tinyint(1) NOT NULL DEFAULT 0,
+  `Categorie` text NOT NULL,
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -44,9 +45,12 @@ CREATE TABLE `Tuiles` (
 --
 
 CREATE TABLE `Users` (
-  `Username` text NOT NULL,
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Username` varchar(100) NOT NULL,
   `Password` varchar(255) NOT NULL,
-  `Admin` tinyint(1) NOT NULL
+  `Admin` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `username_unique` (`Username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Saves users login and rights informations';
 COMMIT;
 
