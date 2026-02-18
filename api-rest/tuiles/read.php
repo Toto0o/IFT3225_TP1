@@ -31,13 +31,14 @@ if ($num>0) {
 		extract($row);
 
 		$tuile_item = array (
-			"id" => $id,
-			"titre" => $titre,
-			"description" => $description,
-			"date" => $date,
-			"priorite" => $priorite,
-			"realise" => $realise,
-			"categorie" => $categorie
+			"id"           => $row['ID'],
+            "titre"        => $row['Titre'],
+            "description"  => $row['Description'],
+            "date"         => $row['Date'],
+            "priorite"     => $row['Priorite'],
+            "realise"      => $row['Realise'],
+            "categorie_id" => $row['categorie_id'],
+            "categorie"    => $row['categorie']
 		);
 		array_push($tuiles_arr['records'], $tuile_item);
 	}
