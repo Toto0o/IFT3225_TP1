@@ -41,6 +41,27 @@ CREATE TABLE `Tuiles` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `Categories`
+--
+
+CREATE TABLE `Categories` (
+  `ID`  int          NOT NULL AUTO_INCREMENT,
+  `Nom` varchar(100) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `nom_unique` (`Nom`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Données de base
+INSERT INTO `Categories` (`Nom`) VALUES
+  ('Backend'),
+  ('Frontend'),
+  ('QA'),
+  ('Docs'),
+  ('DevOps');
+
+------------------------------------------------------------
+
+--
 -- Table structure for table `Users`
 --
 
