@@ -24,7 +24,7 @@ class Tuile {
 			LIMIT 0,1";
 		
 		$stmt = $this->conn->prepare($query);
-		$stmt->binParam(1, $this->id);
+		$stmt->bindParam(1, $this->id);
 		$stmt->execute();
 
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -41,7 +41,7 @@ class Tuile {
 
 	public function read() {
 		$query = "SELECT id, titre, description, date, priorite, realise, categorie
-			FROM". $this->table_name;
+			FROM ". $this->table_name;
 		
 		$stmt = $this->conn->prepare($query);
 		$stmt->execute();
@@ -50,13 +50,14 @@ class Tuile {
 	}
 
 	public function create() {
-		$query = "INSERT INTO" .$this->table_name. "
-			SET id=:id, 
-			description:=description,
-			date:=date,
-			priorite:=priorite,
-			realise:=realise,
-			categorie:=categorie";
+		$query = "INSERT INTO " .$this->table_name. "
+			SET
+			titre=:titre,
+			description=:description,
+			date=:date,
+			priorite=:priorite,
+			realise=:realise,
+			categorie=:categorie";
 		
 		$stmt = $this->conn->prepare($query);
 
@@ -69,7 +70,6 @@ class Tuile {
 		$this->categorie = htmlspecialchars(strip_tags($this->categorie));
 		
 		//bind value
-		$stmt->bindParam(":id", $this->id);
 		$stmt->bindParam(":titre", $this->titre);
 		$stmt->bindParam(":description", $this->description);
 		$stmt->bindParam(":date", $this->date);
@@ -92,7 +92,7 @@ class Tuile {
 
 		//sanitize
 		$this->id=htmlspecialchars(strip_tags($this->id));
-		$stmt->bindparam(1, $this->id);
+		$stmt->bindParam(1, $this->id);
 
 		if ($stmt->execute()) {
 			return true;
