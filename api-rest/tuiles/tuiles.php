@@ -103,3 +103,38 @@ class Tuile {
 
 		return false;
 	}
+
+	public function update() {
+		$query = "UPDATE " . $this->table_name . "
+			SET Titre=:titre,
+			Description=:description,
+			Date=:date,
+			Priorite=:priorite,
+			Realise=:realise,
+			Categorie_ID=:categorie_id
+			WHERE ID=:id";
+
+		$stmt = $this->conn->prepare($query);
+
+		// Sanitize
+		$this->id           = intval($this->id);
+		$this->titre        = htmlspecialchars(strip_tags($this->titre));
+		$this->description  = htmlspecialchars(strip_tags($this->description));
+		$this->date         = htmlspecialchars(strip_tags($this->date));
+		$this->priorite     = htmlspecialchars(strip_tags($this->priorite));
+		$this->categorie_id = intval($this->categorie_id);
+
+		// Bind
+		$stmt->bindParam(":id",           $this->id);
+		$stmt->bindParam(":titre",        $this->titre);
+		$stmt->bindParam(":description",  $this->description);
+		$stmt->bindParam(":date",         $this->date);
+		$stmt->bindParam(":priorite",     $this->priorite);
+		$stmt->bindParam(":realise",      $this->realise);
+		$stmt->bindParam(":categorie_id", $this->categorie_id);
+
+		if ($stmt->execute()) {
+			return true;
+		}
+		return false;
+	}
