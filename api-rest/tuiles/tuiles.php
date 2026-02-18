@@ -82,3 +82,21 @@ class Tuile {
 		}
 
 		return false;
+	}
+
+	public function delete() {
+		
+		$query = "DELETE FROM " .$this->table_name. " WHERE id = ?";
+
+		$stmt = $this->conn->prepare($query);
+
+		//sanitize
+		$this->id=htmlspecialchars(strip_tags($this->id));
+		$stmt->bindparam(1, $this->id);
+
+		if ($stmt->execute()) {
+			return true;
+		}
+
+		return false;
+	}
