@@ -1,15 +1,15 @@
 <?php
 
-header("Acess-Control-Allow-Oriign: *");
-header("Acess-Control-Allow-Headers: access");
-header("Acess-Control-Allow-Methods: GET");
-header("Acess-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Oriign: *");
+header("Access-Control-Allow-Headers: access");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Credentials: true");
 header('Content-type : application/json; charset=UTF-8;');
 
 include_once '../config/database.php';
 include_once 'tuiles/tuile.php';
 
-$databse = new Database();
+$database = new Database();
 $db = $database->getConnection();
 
 $tuile = new Tuile($db);
@@ -17,12 +17,12 @@ $tuile = new Tuile($db);
 $data = json_decode(file_get_contents("php://input"));
 
 if (
-	!empty($data->id) &&
+	// L'ID est créé automatiquement par la database
 	!empty($data->titre) &&
 	!empty($data->description) &&
 	!empty($data->date) &&
 	!empty($data->priorite) &&
-	!empty($data->realise) &&
+	!isset($data->realise) &&
 	!empty($data->categorie)
 ) {
 	$tuile->id = $data->id;
