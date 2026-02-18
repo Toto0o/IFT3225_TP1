@@ -11,16 +11,18 @@ class Tuile {
 	public $date;
 	public $priorite;
 	public $realise;
-	public $categorie;
+	public $categorie_id;
 
 	public function __construct($db) {
 		$this->conn = $db;
 	}
 
 	public function read_one() {
-		$query = "SELECT id, titre, description, date, priorite, realise, categorie
-			FROM ".$this->table_name . "
-			WHERE id = ?
+		$query = "SELECT t.ID, t.Titre, t.Description, t.Date, t.Priorite, t.Realise,
+				c.ID as categorie_id, c.Nom as categorie
+			FROM " . $this->table_name . " t
+			LEFT JOIN Categories c ON t.Categorie_ID = c.ID
+			WHERE t.ID = ?
 			LIMIT 0,1";
 		
 		$stmt = $this->conn->prepare($query);
@@ -31,17 +33,19 @@ class Tuile {
 
 		extract($row);
 
-		$this->id = $id;
-		$this->titre = $titre;
-		$this->description = $description;
-		$this->priorite = $priorite;
-		$this->realise = $realise;
-		$this->categorie = $categorie;
+		$this->id           = $ID;
+		$this->titre        = $Titre;
+		$this->description  = $Description;
+		$this->priorite     = $Priorite;
+		$this->realise      = $Realise;
+		$this->categorie_id = $categorie_id;
 	}
 
 	public function read() {
-		$query = "SELECT id, titre, description, date, priorite, realise, categorie
-			FROM ". $this->table_name;
+		$query = "SELECT t.ID, t.Titre, t.Description, t.Date, t.Priorite, t.Realise,
+				c.ID as categorie_id, c.Nom as categorie
+			FROM " . $this->table_name . " t
+			LEFT JOIN Categories c ON t.Categorie_ID = c.ID";
 		
 		$stmt = $this->conn->prepare($query);
 		$stmt->execute();
@@ -50,14 +54,13 @@ class Tuile {
 	}
 
 	public function create() {
-		$query = "INSERT INTO " .$this->table_name. "
-			SET
-			titre=:titre,
-			description=:description,
-			date=:date,
-			priorite=:priorite,
-			realise=:realise,
-			categorie=:categorie";
+		$query = "INSERT INTO " . $this->table_name . "
+			SET Titre=:titre,
+			Description=:description,
+			Date=:date,
+			Priorite=:priorite,
+			Realise=:realise,
+			Categorie_ID=:categorie_id";
 		
 		$stmt = $this->conn->prepare($query);
 
@@ -67,7 +70,7 @@ class Tuile {
 		$this->description = htmlspecialchars(strip_tags($this->description));
 		$this->date = htmlspecialchars(strip_tags($this->date));
 		$this->priorite = htmlspecialchars(strip_tags($this->priorite));
-		$this->categorie = htmlspecialchars(strip_tags($this->categorie));
+		$this->categorie_id = intval($this->categorie_id);
 		
 		//bind value
 		$stmt->bindParam(":titre", $this->titre);
@@ -75,7 +78,7 @@ class Tuile {
 		$stmt->bindParam(":date", $this->date);
 		$stmt->bindParam(":priorite", $this->priorite);
 		$stmt->bindParam(":realise", $this->realise);
-		$stmt->bindParam(":categorie", $this->categorie);
+		$stmt->bindParam(":categorie_id", $this->categorie_id);
 
 		if ($stmt->execute()) {
 			return true;
