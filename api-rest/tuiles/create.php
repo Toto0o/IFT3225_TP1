@@ -22,8 +22,7 @@ if (
 	!empty($data->description) &&
 	!empty($data->date) &&
 	!empty($data->priorite) &&
-	!isset($data->realise) &&
-	!empty($data->categorie)
+	!isset($data->realise)
 ) {
 	$tuile->id = $data->id;
 	$tuile->titre = $data->titre;
@@ -31,7 +30,7 @@ if (
 	$tuile->date = $data->date;
 	$tuile->priorite = $data->priorite;
 	$tuile->realise = $data->realise;
-	$tuile->categorie = $data->categorie;
+	$tuile->categorie_id = $data->categorie_id ?? null;
 
 	if ($tuile->create()) {
 
