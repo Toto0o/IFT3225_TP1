@@ -1,0 +1,129 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+/* La palette de couleurs a ete inspiree par Vercel.com */
+body {
+  background: #111;
+  color: #e0e0e0;
+  font-family: "Inter", sans-serif;
+}
+
+.navbar {
+  background: #1a1a1a !important;
+  border-bottom: 1px solid #2a2a2a;
+}
+.navbar-brand {
+  color: #fff !important;
+  font-weight: 600;
+}
+.card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  color: #e0e0e0;
+}
+.form-control,
+.form-select {
+  background: #111;
+  border-color: #2a2a2a;
+  color: #e0e0e0;
+}
+.form-control:focus,
+.form-select:focus {
+  background: #111;
+  color: #e0e0e0;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+.form-control::placeholder {
+  color: #555;
+}
+.form-select option {
+  background: #1a1a1a;
+}
+.input-group-text {
+  background: #1a1a1a;
+  border-color: #2a2a2a;
+  color: #888;
+}
+.modal-content {
+  background: #1a1a1a;
+  border-color: #2a2a2a;
+  color: #e0e0e0;
+}
+.modal-header,
+.modal-footer {
+  border-color: #2a2a2a;
+}
+.btn-close {
+  filter: invert(1) opacity(0.6);
+}
+.page-link {
+  background: #1a1a1a;
+  border-color: #2a2a2a;
+  color: #aaa;
+}
+.page-link:hover {
+  background: #222;
+  color: #fff;
+  border-color: #6366f1;
+}
+.page-item.active .page-link {
+  background: #6366f1;
+  border-color: #6366f1;
+}
+.page-item.disabled .page-link {
+  background: #1a1a1a;
+  opacity: 0.4;
+}
+
+.alert-danger {
+  background: #2a1a1a;
+  border-color: #5a2a2a;
+  color: #f87171;
+}
+.alert-success {
+  background: #1a2a1a;
+  border-color: #2a5a2a;
+  color: #6ee7b7;
+}
+.task-card {
+  border-top: 3px solid #2a2a2a;
+}
+.task-card[data-priority="haute"] {
+  border-top-color: #f43f5e;
+}
+.task-card[data-priority="moyenne"] {
+  border-top-color: #f59e0b;
+}
+.task-card[data-priority="basse"] {
+  border-top-color: #10b981;
+}
+
+.task-card.is-done {
+  opacity: 0.45;
+}
+.task-card.is-done .task-title {
+  text-decoration: line-through;
+}
+.toast {
+  background: #1a1a1a !important;
+  border-color: #2a2a2a !important;
+  color: #e0e0e0 !important;
+}
+.toast-container-fixed {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 1100;
+}
+.form-check-input {
+  background-color: #222;
+  border-color: #444;
+}
+.form-check-input:checked {
+  background-color: #6366f1;
+  border-color: #6366f1;
+}
+.empty-state {
+  text-align: center;
+  padding: 4rem;
+  color: #555;
+}
