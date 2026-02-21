@@ -45,7 +45,11 @@ class Account {
 
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-		$this->id = $row['id'];
+		if ($row) {
+			$this->id = $row['id'];
+		} else {
+			$this->id = NULL;
+		}
 
 		return $this->id;
 

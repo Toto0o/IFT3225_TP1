@@ -1,9 +1,9 @@
 <?php
 
-session.start();
+session_start();
 
 if (empty( $_SESSION['count'])) {
-	$_SESSIONS['count'] = 1;
+	$_SESSION['count'] = 1;
 } else {
 	$_SESSION['count']++;
 }
