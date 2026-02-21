@@ -2,11 +2,9 @@
 
 class Account {
 	
-	private $id;
-	private $name;
-	private $authenticated;
+    private $conn;
+	public $id;
 	private $table_name = 'Users';
-	private $login_table = 'session-login';
 
 	public function __construct($db) {
 		$this->conn = $db;
@@ -101,48 +99,40 @@ class Account {
 
 		$id = $this->getId_from_name($username);
 
-		$query = "SELECT username, password FROM " . $this->tbale_name . " WHERE id = :id";
+		if ($id == NULL) {
+			return false;
+		}
+
+		if (session_status() == PHP_SESSION_NONE) {
+			session_start();
+		}
+
+		$query = "SELECT username, password, isAdmin FROM " . $this->table_name . " WHERE id = :id";
 
 		$stmt = $this->conn->prepare($query);
 
 		$stmt->bindParam(":id", $id);
 
-		$row = $stmt->execute();
+		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-		$hash = $hash = password_hash($password, PASSWORD_DEFAULT);
+		$hash = password_hash($password, PASSWORD_DEFAULT);
 
-		if ($row['username'] == $username && $row['passowrd'] == $hash) {
-			$this->username = $username;
-			$this->isAdmin = $row['isAdmin'];
-			return true;
+		if (is_array($row)) {
+			if (password_verify($password, $row['password'])) {
+				$_SESSION['id'] = $id;
+				return true;
+			}
 		}
 
 		return false;
 
 	}
 
-	public function session_login(int $id) {
-		$query = "INSERT INTO " . $this->login_tbale . " 
-			SET
-			id = :id,
-			date = :date,
-			time = :time";
-		
-		$date;
-		$time;
-		
-		$stmt = $this->conn->prepare($query);
-		$stmt->bindParam(":id", $id);
-		$stmt->bindParam(":date", $date);
-		$stmt->bindParam(":time", $time);
-
-		if ($stmt->execute()) {
+	public function logout() {
+		if (session_status() == PHP_SESSION_ACTIVE)	{
+			session_destroy();
 			return true;
 		}
-
 		return false;
 	}
-	
-	public function register_login() {}
-
 }

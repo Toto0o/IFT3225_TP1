@@ -1,19 +1,19 @@
 
 
-function validate_username(String username) {
+function validate_username(username) {
 	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username);
 }
 
-function validate_password(String password) {
-	return password.length() > 5;
+function validate_password(password) {
+	return password.length > 5;
 }
 
-function compare_password(String passowrd, String repeat) {
+function compare_password(password, repeat) {
 	return password == repeat;
 }
 
 
-async function username_unique(String username) {
+async function username_unique(username) {
 
 	const url = '/users/' + username;
 	const response = await fetch(url, {

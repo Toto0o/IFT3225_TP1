@@ -1,51 +1,6 @@
 <?php
 session_start();
 if (isset($_SESSION['user_id'])) { header('Location: index.php'); exit; }
-
-$error = $success = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email    = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $confirm  = $_POST['confirm_password'] ?? '';
-
-    if (empty($email) || empty($password) || empty($confirm)) {
-        $error = 'Veuillez remplir tous les champs.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Adresse courriel invalide.';
-    } elseif (strlen($password) < 6) {
-        $error = 'Le mot de passe doit contenir au moins 6 caractères.';
-    } elseif ($password !== $confirm) {
-        $error = 'Les mots de passe ne correspondent pas.';
-    } else {
-        include_once 'api-rest/config/database.php';
-        $database = new Database();
-        $db = $database->getConnection();
-
-        if ($db) {
-            $check = $db->prepare("SELECT id FROM users WHERE Username = ? LIMIT 1");
-            $check->bindParam(1, $email);
-            $check->execute();
-
-            if ($check->rowCount() > 0) {
-                $error = 'Ce courriel est déjà utilisé.';
-            } else {
-                $hashed = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $db->prepare("INSERT INTO users SET Username=:username, Password=:password, Admin=0");
-                $stmt->bindParam(':username', $email);
-                $stmt->bindParam(':password', $hashed);
-
-                if ($stmt->execute()) {
-                    $success = 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.';
-                } else {
-                    $error = 'Impossible de créer le compte.';
-                }
-            }
-        } else {
-            $error = 'Erreur de connexion à la base de données.';
-        }
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -62,8 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h4 class="mb-1 fw-semibold">Créer un compte</h4>
     <p class="text-secondary small mb-4">Rejoignez Task Manager</p>
 
-    <?php if ($error):   ?><div class="alert alert-danger  py-2"><?= htmlspecialchars($error)   ?></div><?php endif; ?>
-    <?php if ($success): ?><div class="alert alert-success py-2"><?= htmlspecialchars($success) ?></div><?php endif; ?>
+    <div id="serverMessage"></div>
 
     <form method="POST" id="registerForm" novalidate>
       <div class="mb-3">
@@ -96,30 +50,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/api.js"></script>
+<script src="assets/checks.js"></script>
 <script>
-document.getElementById('registerForm').addEventListener('submit', function(e) {
+
+  function showMessage(message, type = 'danger') {
+    const container = document.getElementById('serverMessage');
+    container.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>`;
+  }
+
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
   const email    = document.getElementById('email');
   const password = document.getElementById('password');
   const confirm  = document.getElementById('confirm_password');
   let valid = true;
-  if (!email.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+  if (!email.value || !validate_username(email.value)) {
     email.classList.add('is-invalid'); valid = false;
   } else email.classList.remove('is-invalid');
-  if (password.value.length < 6) {
+  if (!validate_password(password.value)) {
     password.classList.add('is-invalid'); valid = false;
   } else password.classList.remove('is-invalid');
-  if (!confirm.value || confirm.value !== password.value) {
+  if (!confirm.value || !compare_password(password.value, confirm.value)) {
     confirm.classList.add('is-invalid'); valid = false;
   } else confirm.classList.remove('is-invalid');
-  if (!valid) e.preventDefault();
-
-  const error = document.getElementById('error');
-  const success = document.getElementById('success');
-
-  let check
-
-
-
+  if (!valid) {
+    showMessage('Veuillez corriger les erreurs dans le formulaire.');
+  } else {
+    try {
+      const response = await apiRequest('/users', 'POST', {
+        username: email.value,
+        password: password.value
+      });
+      if (response.ok) {
+        showMessage('Compte créé avec succès ! Redirection...', 'success');
+        setTimeout(() => window.location.href = 'login.php', 2000);
+      } else {
+        const data = await response.json();
+        showMessage(data.message || 'Erreur lors de la création du compte.');
+      }
+    } catch (error) {
+      showMessage('Erreur de connexion au serveur.');
+    }
+  }
 });
 </script>
 </body>
