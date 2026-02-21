@@ -1,6 +1,6 @@
 async function create_user(username, password, isAdmin) {
 
-	const response = await fetch('/users', {
+	const response = await fetch('gestion/users', {
 		method : 'POST',
 		body : JSON.stringify({
 			"username": username,
@@ -22,7 +22,7 @@ async function create_user(username, password, isAdmin) {
 
 async function login(username, password) {
 
-	const response = await fetch('/login', {
+	const response = await fetch('gestion/users/login', {
 		method : 'POST',
 		body : JSON.stringify({
 			"username": username,
@@ -43,7 +43,7 @@ async function login(username, password) {
 }
 
 async function logout() {
-	const response = await fetch('/logout', {
+	const response = await fetch('gestion/users/logout', {
 		method : 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -59,7 +59,7 @@ async function logout() {
 }
 
 async function get_user(username) {
-	const response = await fetch(`/users/${username}`, {
+	const response = await fetch(`gestion/users/${username}`, {
 		method : 'GET',
 		headers: {
 			'Content-Type': 'application/json'
@@ -75,7 +75,7 @@ async function get_user(username) {
 }
 
 async function update_user(username, password, isAdmin) {
-	const response = await fetch('/users', {
+	const response = await fetch('gestion/users', {
 		method : 'PUT',
 		body : JSON.stringify({
 			"username": username,
@@ -96,7 +96,7 @@ async function update_user(username, password, isAdmin) {
 }
 
 async function delete_user(username) {
-	const response = await fetch('/users', {
+	const response = await fetch('gestion/users', {
 		method : 'DELETE',
 		body : JSON.stringify({
 			"username": username
