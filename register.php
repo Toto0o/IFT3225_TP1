@@ -82,10 +82,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     showMessage('Veuillez corriger les erreurs dans le formulaire.');
   } else {
     try {
-      const response = await apiRequest('/users', 'POST', {
-        username: email.value,
-        password: password.value
-      });
+      const response = await create_user(email.value, password.value);
       if (response.ok) {
         showMessage('Compte créé avec succès ! Redirection...', 'success');
         setTimeout(() => window.location.href = 'login.php', 2000);
@@ -94,7 +91,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         showMessage(data.message || 'Erreur lors de la création du compte.');
       }
     } catch (error) {
-      showMessage('Erreur de connexion au serveur.');
+      showMessage('Erreur de connexion au serveur.' + error.message);
     }
   }
 });
