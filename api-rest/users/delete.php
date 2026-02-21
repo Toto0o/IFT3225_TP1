@@ -1,0 +1,26 @@
+<?php
+
+header("Acess-Control-Allow-Oriign: *");
+header("Acess-Control-Allow-Methods: DELETE");
+header('Content-type : application/json; charset=UTF-8;');
+
+include_once '../config/database.php';
+include_once '../users/account.php';
+
+$database = new Database();
+$db = $database->getConnection();
+$account = new account($db);
+
+$data = json_decode(file_get_contents("php://input"));
+
+if ($account->delete_account($id)) {
+
+	http_response_code(200); //ok
+
+	echo json_encode(array("message" => "Utilisateur effacé"));
+} else {
+
+	http_response_code(503); // service unavailable
+
+	echo json_encode(array("message" => "Impossible d'effacer l'utilisateur"));
+}
