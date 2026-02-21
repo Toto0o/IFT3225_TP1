@@ -22,9 +22,9 @@ if (
 	!empty($data->isAdmin)
 ) {
 
-	if ($account->add_account($username, $password, $isAdmin)) {
+	if ($account->add_account($data->username, $data->password, $data->isAdmin)) {
 
-		http_response_code(201);
+		http_response_code(200);
 
 		echo json_encode(array("message" => "Utilisateur crée"));
 	} else {
