@@ -1,15 +1,17 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
-header("Acess-Control-Allow-Oriign: *");
-header("Acess-Control-Allow-Headers: access");
-header("Acess-Control-Allow-Methods: GET");
-header("Acess-Control-Allow-Credentials: true");
-header('Content-type : application/json; charset=UTF-8;');
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: access");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Credentials: true");
+header('Content-type: application/json; charset=UTF-8;');
 
 include_once '../config/database.php';
-include_once 'tuiles/tuile.php';
+include_once '../tuiles/tuiles.php';
 
-$databse = new Database();
+$database = new Database();
 $db = $database->getConnection();
 
 $tuile = new Tuile($db);
@@ -17,13 +19,12 @@ $tuile = new Tuile($db);
 $data = json_decode(file_get_contents("php://input"));
 
 if (
-	!empty($data->id) &&
+	// L'ID est créé automatiquement par la database
 	!empty($data->titre) &&
 	!empty($data->description) &&
 	!empty($data->date) &&
 	!empty($data->priorite) &&
-	!empty($data->realise) &&
-	!empty($data->categorie)
+	isset($data->realise)
 ) {
 	$tuile->id = $data->id;
 	$tuile->titre = $data->titre;
@@ -31,7 +32,7 @@ if (
 	$tuile->date = $data->date;
 	$tuile->priorite = $data->priorite;
 	$tuile->realise = $data->realise;
-	$tuile->categorie = $data->categorie;
+	$tuile->categorie_id = !empty($data->categorie_id) ? intval($data->categorie_id) : null;
 
 	if ($tuile->create()) {
 

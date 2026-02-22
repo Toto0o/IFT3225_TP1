@@ -4,7 +4,7 @@
 		private $host = "localhost"; // a modifier pour www-ens.iro.umontreal.ca 
 		private $db_name = "gestion_tache"; 
 		private $username = "root"; // a changer pour user sur ens
-		private $password = "Doudou65!"; // a changer pour paswd du user 
+		private $password = "root"; // a changer pour paswd du user 
 		public $conn; 
 		
 		// get the database connection 

@@ -4,10 +4,10 @@ header("Acess-Control-Allow-Oriign: *");
 header("Acess-Control-Allow-Headers: access");
 header("Acess-Control-Allow-Methods: GET");
 header("Acess-Control-Allow-Credentials: true");
-header('Content-type : application/json; charset=UTF-8;');
+header('Content-type: application/json; charset=UTF-8;');
 
 include_once '../config/database.php';
-include_once '../tuiles/tuile.php';
+include_once '../tuiles/tuiles.php';
 
 $database = new Database();
 $db = $database->getConnection();
@@ -37,5 +37,5 @@ if ($tuile->titre != null) {
 else {
 	http_response_code(404);
 
-	ehco json_encode(array("message" => "La tuile (id : " . $tuile->id . " n'existe pas"));
+	echo json_encode(array("message" => "La tuile (id : " . $tuile->id . " n'existe pas"));
 }
