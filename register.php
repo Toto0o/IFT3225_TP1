@@ -4,6 +4,7 @@ if (isset($_SESSION['user_id'])) { header('Location: index.php'); exit; }
 
 $error = $success = '';
 
+// Traitement du formulaire d'inscription
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email    = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -23,10 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $db = $database->getConnection();
 
         if ($db) {
+          // Vérifie si l'adresse courriel est déjà utilisée
             $check = $db->prepare("SELECT id FROM users WHERE Username = ? LIMIT 1");
             $check->bindParam(1, $email);
             $check->execute();
 
+            // Si un compte existe déjà avec ce courriel, affiche une erreur, sinon crée le compte
             if ($check->rowCount() > 0) {
                 $error = 'Ce courriel est déjà utilisé.';
             } else {
@@ -35,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bindParam(':username', $email);
                 $stmt->bindParam(':password', $hashed);
 
+                // Si l'insertion réussit, affiche un message de succès, sinon une erreur
                 if ($stmt->execute()) {
                     $success = 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.';
                 } else {
@@ -102,6 +106,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
   const password = document.getElementById('password');
   const confirm  = document.getElementById('confirm_password');
   let valid = true;
+  // Validation côté client pour une meilleure expérience utilisateur (REGEX simple pour l'email, longueur minimale pour le mot de passe, et correspondance des mots de passe)
   if (!email.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
     email.classList.add('is-invalid'); valid = false;
   } else email.classList.remove('is-invalid');

@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+// Redirige vers la page de connexion si l'utilisateur n'est pas connecté.
 if (!isset($_SESSION['user_id'])) { header('Location: login.php'); exit; }
 
 $user_name = $_SESSION['user_name'] ?? '';
@@ -17,11 +17,17 @@ $is_admin  = $_SESSION['is_admin']  ?? false;
 </head>
 <body>
 
+
+<!-- Barre de navigation -->
 <nav class="navbar navbar-expand-md sticky-top px-3">
   <a class="navbar-brand" href="index.php">Task Manager</a>
+
+  <!-- Bouton hamburger pour mobile -->
   <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
     <span class="navbar-toggler-icon"></span>
   </button>
+
+  <!-- Menu responsive -->
   <div class="collapse navbar-collapse" id="navMenu">
     <div class="ms-auto d-flex align-items-center gap-2">
       <?php if (isset($_SESSION['user_id'])): ?>
@@ -35,6 +41,7 @@ $is_admin  = $_SESSION['is_admin']  ?? false;
   </div>
 </nav>
 
+<!-------------------------------------------------- Contenneur principal ----------------------------------------------->
 <div class="container-fluid px-4 py-4" style="max-width:1400px;">
 
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
@@ -45,10 +52,15 @@ $is_admin  = $_SESSION['is_admin']  ?? false;
     <button class="btn btn-primary" id="btnNewTask">+ Nouvelle tâche</button>
   </div>
 
+
+  <!----------------------- Section des filtres -------------------------------------->
   <div class="row g-2 mb-4">
+    <!-- Barre de recherche -->
     <div class="col-12 col-sm-4 col-lg-3">
       <input type="text" class="form-control" id="searchInput" placeholder="Rechercher…" />
     </div>
+
+    <!-- Filtre priorité -->
     <div class="col-6 col-sm-3 col-lg-2">
       <select class="form-select" id="filterPriority">
         <option value="">Priorité</option>
@@ -57,11 +69,15 @@ $is_admin  = $_SESSION['is_admin']  ?? false;
         <option value="basse">Basse</option>
       </select>
     </div>
+
+    <!-- Filtre catégorie (rempli dynamiquement via JS) -->
     <div class="col-6 col-sm-3 col-lg-2">
       <select class="form-select" id="filterCategory">
         <option value="">Catégorie</option>
       </select>
     </div>
+
+    <!-- Filtre statut -->
     <div class="col-6 col-sm-3 col-lg-2">
       <select class="form-select" id="filterDone">
         <option value="">Statut</option>
@@ -69,20 +85,25 @@ $is_admin  = $_SESSION['is_admin']  ?? false;
         <option value="1">Terminées</option>
       </select>
     </div>
+
+    <!-- Bouton reset filtres -->
     <div class="col-6 col-sm-3 col-lg-1">
       <button class="btn btn-outline-secondary w-100" id="btnReset">Reset</button>
     </div>
   </div>
 
+
+  <!---------------------------- Grille des tâches (remplie dynamiquement via JS) -------------------------------------->
   <div class="row g-3" id="tasksGrid"></div>
 
+  <!-------------------------------- Pagination (gérée dynamiquement via JS) -------------------------------------------->
   <nav class="mt-4">
     <ul class="pagination justify-content-center" id="pagination"></ul>
   </nav>
 
 </div>
 
-
+<!-------------------------------- Modals (création/édition et confirmation de suppression) -------------------------------->
 <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -145,7 +166,7 @@ $is_admin  = $_SESSION['is_admin']  ?? false;
   </div>
 </div>
 
-
+<!-------------------------------------------- Modal de confirmation pour la suppression -------------------------------------------->
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-sm">
     <div class="modal-content text-center">
@@ -161,13 +182,15 @@ $is_admin  = $_SESSION['is_admin']  ?? false;
   </div>
 </div>
 
-
+<!----------------------------------------------- Conteneur pour les toasts de notifications -------------------------------------------->
 <div class="toast-container-fixed" id="toastContainer"></div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 
+
+// URL des endpoints de l'API
 const API = {
   tasksRead:   'api-rest/tuiles/read.php',
   tasksCreate: 'api-rest/tuiles/create.php',
@@ -176,15 +199,20 @@ const API = {
   categories:  'api-rest/categories/read.php',
 };
 
+// État global de l'application
 let state = {
   tasks: [], page: 1, perPage: 15, totalPages: 1, totalTasks: 0,
   filters: { search: '', priority: '', category: '', done: '' },
   deleteId: null,
 };
 
+
+// Initialisation des modals Bootstrap
 const taskModalBS    = new bootstrap.Modal(document.getElementById('taskModal'));
 const confirmModalBS = new bootstrap.Modal(document.getElementById('confirmModal'));
 
+
+// Chargement des catégories pour les filtres et le formulaire
 async function loadCategories() {
   try {
     const res  = await fetch(API.categories);
@@ -204,6 +232,8 @@ async function loadCategories() {
   }
 }
 
+
+// Chargement des tâches avec application des filtres, pagination, et mise à jour des statistiques
 async function loadTasks() {
   try {
     const res  = await fetch(API.tasksRead);
@@ -236,6 +266,8 @@ async function loadTasks() {
   renderPagination();
 }
 
+
+// Rendu de la grille des tâches en HTML
 function renderTasks() {
   const grid = document.getElementById('tasksGrid');
   if (!state.tasks.length) {
@@ -277,6 +309,8 @@ function renderTasks() {
   `).join('');
 }
 
+
+// Rendu de la pagination en bas de la page
 function renderPagination() {
   const ul = document.getElementById('pagination');
   if (state.totalPages <= 1) { ul.innerHTML = ''; return; }
@@ -295,6 +329,8 @@ function renderPagination() {
   ul.innerHTML = html;
 }
 
+
+// Changement de page avec préservation des filtres
 function goPage(p) {
   if (p < 1 || p > state.totalPages) return;
   state.page = p; loadTasks();
@@ -376,6 +412,8 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
   }
 });
 
+
+// Affiche la modal de confirmation avant de supprimer une tâche
 function askDelete(id) { state.deleteId = id; confirmModalBS.show(); }
 
 document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
@@ -399,6 +437,8 @@ document.getElementById('confirmDeleteBtn').addEventListener('click', async () =
   loadTasks();
 });
 
+
+// Permet de marquer une tâche comme terminée ou réouverte directement depuis la checkbox de la carte, sans ouvrir la modal d'édition.
 async function toggleDone(id, checked) {
   try {
     await fetch(API.tasksUpdate, {
@@ -425,6 +465,8 @@ document.getElementById('btnReset').addEventListener('click', () => {
   loadTasks();
 });
 
+
+// Affiche une notification temporaire (toast) en bas de l'écran
 function showToast(message, type = 'success') {
   const id = 'toast-' + Date.now();
   document.getElementById('toastContainer').insertAdjacentHTML('beforeend', `
@@ -434,6 +476,7 @@ function showToast(message, type = 'success') {
   setTimeout(() => document.getElementById(id)?.remove(), 3000);
 }
 
+// Utilitaires
 function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 function formatDate(s) {
   if (!s) return '—';

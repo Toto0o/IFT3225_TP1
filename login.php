@@ -4,6 +4,8 @@ if (isset($_SESSION['user_id'])) { header('Location: index.php'); exit; }
 
 $error = '';
 
+
+// Traitement du formulaire de connexion
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email    = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -13,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Adresse courriel invalide.';
     } else {
+      // Connexion à la base de données et vérification des identifiants
         include_once 'api-rest/config/database.php';
         $database = new Database();
         $db = $database->getConnection();
@@ -23,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute();
 
             if ($stmt->rowCount() > 0) {
+              // Récupération de la ligne de l'utilisateur et vérification du mot de passe
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if (password_verify($password, $row['password'])) {
